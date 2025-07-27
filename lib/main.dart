@@ -1,3 +1,4 @@
+import 'screens/choose_user_type.dart';
 import 'screens/admin_panel.dart';
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart'; // ربط شاشة تسجيل الدخول
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
         fontFamily: 'Arial',
       ),
-      home: AdminPanel(), // فتح شاشة تسجيل الدخول مباشرة
+      home: ChooseUserType(), // فتح شاشة تسجيل الدخول مباشرة
       debugShowCheckedModeBanner: false,
     );
   }
