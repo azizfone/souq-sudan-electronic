@@ -1,43 +1,41 @@
 import 'package:flutter/material.dart';
+import 'signup_screen.dart'; // استيراد شاشة التسجيل
 
-class SignupScreen extends StatefulWidget {
+class LoginScreen extends StatefulWidget {
   @override
-  _SignupScreenState createState() => _SignupScreenState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
 
-  void _register() {
+  void _login() {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
-    final confirmPassword = _confirmPasswordController.text.trim();
 
-    if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('يرجى تعبئة جميع الحقول')),
+        SnackBar(content: Text('يرجى إدخال البريد وكلمة المرور')),
       );
       return;
     }
 
-    if (password != confirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('كلمتا المرور غير متطابقتين')),
-      );
-      return;
-    }
+    print('تسجيل الدخول: $email - $password');
+  }
 
-    // هنا يتم تسجيل المستخدم في Firebase
-    print('تسجيل حساب جديد: $email - $password');
+  void _navigateToSignup() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => SignupScreen()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('تسجيل حساب جديد'),
+        title: Text('تسجيل الدخول'),
         centerTitle: true,
       ),
       body: Padding(
@@ -54,16 +52,14 @@ class _SignupScreenState extends State<SignupScreen> {
               decoration: InputDecoration(labelText: 'كلمة المرور'),
               obscureText: true,
             ),
-            SizedBox(height: 10),
-            TextField(
-              controller: _confirmPasswordController,
-              decoration: InputDecoration(labelText: 'تأكيد كلمة المرور'),
-              obscureText: true,
-            ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _register,
-              child: Text('إنشاء حساب'),
+              onPressed: _login,
+              child: Text('دخول'),
+            ),
+            TextButton(
+              onPressed: _navigateToSignup,
+              child: Text('ليس لديك حساب؟ إنشاء حساب'),
             ),
           ],
         ),
