@@ -1,23 +1,39 @@
-import 'screens/choose_user_type.dart';
-import 'screens/admin_panel.dart';
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart'; // ربط شاشة تسجيل الدخول
+import 'package:shared_preferences/shared_preferences.dart';
+import 'choose_user_type.dart';
 
-void main() {
-  runApp(MyApp());
-}
+class AdminPanel extends StatelessWidget {
+  Future<void> _logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('isAdmin'); // نحذف علامة الدخول
 
-class MyApp extends StatelessWidget {
+    // نرجع المستخدم إلى شاشة الاختيار
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => ChooseUserType()),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'سوق السودان الإلكتروني',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        fontFamily: 'Arial',
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('لوحة تحكم المشرف'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            tooltip: 'تسجيل الخروج',
+            onPressed: () => _logout(context),
+          )
+        ],
       ),
-      home: ChooseUserType(), // فتح شاشة تسجيل الدخول مباشرة
-      debugShowCheckedModeBanner: false,
+      body: Center(
+        child: Text(
+          'مرحباً بك في لوحة التحكم',
+          style: TextStyle(fontSize: 20),
+        ),
+      ),
     );
   }
 }
