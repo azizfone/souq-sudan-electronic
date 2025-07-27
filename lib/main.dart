@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screens/login_screen.dart'; // ربط شاشة تسجيل الدخول
 
 void main() {
   runApp(MyApp());
@@ -13,23 +14,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
         fontFamily: 'Arial',
       ),
-      home: HomeScreen(),
+      home: LoginScreen(), // فتح شاشة تسجيل الدخول مباشرة
       debugShowCheckedModeBanner: false,
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('سوق السودان الإلكتروني'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Text('مرحبًا بك في سوق السودان'),
-      ),
     );
   }
 }
