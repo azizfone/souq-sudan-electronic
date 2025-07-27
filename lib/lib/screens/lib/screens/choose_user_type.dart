@@ -1,11 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'home_screen.dart';
 import 'admin_panel.dart';
 
-class ChooseUserType extends StatelessWidget {
-  final adminPassword = '0912323767Aa'; // 🔐 كلمة سر المشرف
+class ChooseUserType extends StatefulWidget {
+  @override
+  _ChooseUserTypeState createState() => _ChooseUserTypeState();
+}
 
-  void _showAdminLoginDialog(BuildContext context) {
+class _ChooseUserTypeState extends State<ChooseUserType> {
+  final adminPassword = '0912323767Aa';
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfAdminLoggedIn();
+  }
+
+  Future<void> _checkIfAdminLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isAdmin = prefs.getBool('isAdmin') ?? false;
+
+    if (isAdmin) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => AdminPanel()),
+      );
+    }
+  }
+
+  void _showAdminLoginDialog() {
     final TextEditingController _passwordController = TextEditingController();
 
     showDialog(
@@ -24,14 +49,18 @@ class ChooseUserType extends StatelessWidget {
           ),
           ElevatedButton(
             child: Text('دخول'),
-            onPressed: () {
+            onPressed: () async {
               if (_passwordController.text == adminPassword) {
-                Navigator.pop(context); // اغلق النافذة
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('isAdmin', true);
+
+                Navigator.pop(context);
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (_) => AdminPanel()),
                 );
               } else {
+                Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('كلمة السر غير صحيحة')),
                 );
@@ -43,44 +72,38 @@ class ChooseUserType extends StatelessWidget {
     );
   }
 
+  void _goToUserHome() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => HomeScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('اختر نوع الدخول'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text('اختر نوع الدخول')),
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('من فضلك اختر نوع المستخدم:', style: TextStyle(fontSize: 20)),
-              SizedBox(height: 30),
-              ElevatedButton.icon(
-                icon: Icon(Icons.person),
-                label: Text('دخول كمستخدم'),
-                style: ElevatedButton.styleFrom(minimumSize: Size(200, 50)),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => HomeScreen()),
-                  );
-                },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton.icon(
+              icon: Icon(Icons.person),
+              label: Text('دخول كمستخدم'),
+              onPressed: _goToUserHome,
+              style: ElevatedButton.styleFrom(minimumSize: Size(200, 50)),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton.icon(
+              icon: Icon(Icons.lock),
+              label: Text('دخول كمشرف'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                minimumSize: Size(200, 50),
               ),
-              SizedBox(height: 20),
-              ElevatedButton.icon(
-                icon: Icon(Icons.lock),
-                label: Text('دخول كمشرف'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  minimumSize: Size(200, 50),
-                ),
-                onPressed: () => _showAdminLoginDialog(context),
-              ),
-            ],
-          ),
+              onPressed: _showAdminLoginDialog,
+            ),
+          ],
         ),
       ),
     );
